@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD MApper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="test">
+
+  <insert id="insertAdmin" parameterType="com.team5.Pojo.Administrator">
+    INSERT INTO administrator VALUES (#{soeid},#{name})
+  </insert>
+
+
+  <!--this is the CRUD of Rates-->
+  <insert id="insertRatesData" parameterType="com.team5.Pojo.RatesData">
+    INSERT INTO rates_data VALUES (#{term_currency}, #{rate},#{date},#{base_currency},#{id})
+  </insert>
+
+  <select id="getRatesDataByTCBCDate" parameterType="com.team5.Pojo.RatesData" resultType="com.team5.Pojo.RatesData">
+    SELECT * FROM rates_data WHERE term_currency like '%${value}%'
+  </select>
+
+  <select id="getRatesDataAll" resultType="com.team5.Pojo.RatesData">
+    SELECT * FROM rates_data
+  </select>
+
+  <select id="getRateDataByDateAndBaseAndTerm" parameterType="com.team5.Pojo.RatesData" resultType="com.team5.Pojo.RatesData">
+    SELECT * FROM rates_data where date=#{date} and term_currency=#{term_currency} and base_currency=#{base_currency}
+  </select>
+
+  <select id="getRateDataByDateAndBase" resultType="com.team5.Pojo.RatesData">
+    SELECT * FROM rates_data where date=#{date} and base_currency=#{base_currency}
+  </select>
+
+  <select id="deleteRatesDataByDateBCTC" parameterType="com.team5.Pojo.RatesData">
+    DELETE FROM rates_data WHERE date=#{date} and base_currency=#{base_currency} and term_currency=#{term_currency}
+  </select>
+
+  <select id="updateRatesData" parameterType="com.team5.Pojo.RatesData" resultType="com.team5.Pojo.RatesData">
+    UPDATE rates_data SET id=#{id},rate=#{rate},date=#{date},base_currency=#{base_currency} WHERE date=#{date} and term_currency=#{term_currency} and base_currency=#{base_currency}
+  </select>
+
+
+  <!--this is the CRUD of Prices-->
+  <insert id="insertPricesData" parameterType="com.team5.Pojo.PricesData">
+    INSERT INTO prices_data VALUES (#{symbol},#{price},#{date},#{base_currency})
+  </insert>
+
+  <select id="getPricesDataAll" resultType="com.team5.Pojo.PricesData">
+    SELECT * FROM prices_data
+  </select>
+
+  <select id="getPricesDataBySymbol" resultType="com.team5.Pojo.PricesData">
+    SELECT * FROM prices_data WHERE symbol like '%${value}%'
+  </select>
+
+  <select id="getPricesDataBySymbolAndDateAndBase" parameterType="com.team5.Pojo.PricesData" resultType="com.team5.Pojo.PricesData">
+    SELECT * FROM prices_data WHERE symbol=#{symbol} and date=#{date} and base_currency=#{base_currency}
+  </select>
+
+  <select id="getPricesDataBySymbolAndDate" parameterType="com.team5.Pojo.PricesData" resultType="com.team5.Pojo.PricesData">
+    SELECT * FROM prices_data WHERE symbol=#{symbol} and date=#{date}
+  </select>
+
+  <select id="deletePricesDataBySymbol" parameterType="java.lang.String">
+    DELETE FROM prices_data WHERE symbol=#{symbol}
+  </select>
+
+  <select id="updatePricesData" parameterType="com.team5.Pojo.PricesData" resultType="com.team5.Pojo.PricesData">
+    UPDATE prices_data SET price=#{price},date=#{date} WHERE symbol=#{symbol}
+  </select>
+
+
+  <!--this is the CRUD of Portfolio-->
+  <insert id="createPortfolio" parameterType="com.team5.Pojo.Portfolio">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO portfolio VALUES (#{id},#{name},#{fund_manager_id},#{cash},#{initial_cash})
+  </insert>
+
+  <delete id="deletePortfolio" parameterType="int">
+    DELETE FROM portfolio WHERE ID = (#{ID})
+  </delete>
+
+  <update id="updatePortfolio" >
+    update portfolio set name = #{name}, fund_manager_id = #{fund_manager_id}, cash=#{cash}, initial_cash = #{initial_cash} where id =#{id}
+  </update>
+
+  <select id="queryPortfolio" parameterType="String" resultType="com.team5.Pojo.Portfolio">
+    select * from portfolio where fund_manager_id = #{fund_manager_id}
+  </select>
+  <select id="queryPortfolioById" parameterType="int" resultType="com.team5.Pojo.Portfolio">
+    select * from portfolio where id = #{id}
+  </select>
+
+  <select id="queryPortfolioAll"  resultType="com.team5.Pojo.Portfolio">
+    select * from portfolio
+  </select>
+
+  <!--this is the CRUD of Position-->
+  <insert id="createPosition" parameterType="com.team5.Pojo.Position">
+    <selectKey keyProperty="id" order="AFTER" resultType="int">
+      SELECT LAST_INSERT_ID()
+    </selectKey>
+    INSERT INTO position (symbol,quantity,price,portfolio_id,base_currency,term_currency,date)VALUES
+    (#{symbol},#{quantity},#{price},#{portfolio_id},#{base_currency},#{term_currency},#{date})
+  </insert>
+
+  <select id="queryPriceDateAndSymbol" resultType="com.team5.Pojo.PricesData">
+    SELECT * FROM prices_data where symbol = #{symbol} and date = #{date}
+  </select>
+
+  <delete id="deletePosition" parameterType="int">
+    DELETE FROM position WHERE id = (#{id})
+  </delete>
+
+  <update id="updatePosition" parameterType="com.team5.Pojo.Position">
+    update position set symbol = #{symbol}, quantity = #{quantity}, price = #{price}, portfolio_id = #{portfolio_id},base_currency = #{base_currency},term_currency=#{term_currency},date = #{date} where id =#{id}
+  </update>
+
+  <select id="queryPosition" parameterType="int" resultType="com.team5.Pojo.Position">
+    select * from position where portfolio_id = #{portfolio_id}
+  </select>
+
+  <select id="queryPositionById" parameterType="int" resultType="com.team5.Pojo.Position">
+    select * from position where id = #{id}
+  </select>
+
+  <select id="queryPositionToDel" parameterType="int" resultType="int">
+    select id from position where portfolio_id = #{portfolio_id}
+  </select>
+
+  <select id="queryQuantityToUpdate" parameterType="int" resultType="int">
+    select quantity from position where id = #{id}
+  </select>
+
+  <!--<select id="queryTotalPrice" parameterType="com.team5.Pojo.Position" resultType="double">-->
+    <!--select ifnull(sum(price),0) as sum from position where portfolio_id=#{portfolio_id} and date=#{date}-->
+  <!--</select>-->
+
+  <select id="queryTotalPrice" parameterType="com.team5.Pojo.Position" resultType="com.team5.Pojo.Position">
+    select * from position where portfolio_id=#{portfolio_id} and date=#{date}
+  </select>
+
+  <select id="queryPositionsToPrice" parameterType="com.team5.Pojo.PricesData" resultType="com.team5.Pojo.Position">
+    select * from position where base_currency=#{base_currency} and date=#{date}
+  </select>
+
+  <select id="queryPositionAll"  resultType="com.team5.Pojo.Position">
+    select * from position
+  </select>
+
+
+  <!--this is the CRUD of FundManager-->
+  <insert id="insertFundManager" parameterType="com.team5.Pojo.FundManager">
+    INSERT INTO fund_manager VALUES (#{soeid}, #{name})
+  </insert>
+
+  <select id="queryFundManager" parameterType="String" resultType="com.team5.Pojo.FundManager">
+    SELECT * FROM fund_manager WHERE soeid = #{soeid}
+  </select>
+
+  <select id="queryAllFundManager" resultType="com.team5.Pojo.FundManager">
+    SELECT * FROM fund_manager
+  </select>
+
+  <update id="updateFundManager" parameterType="com.team5.Pojo.FundManager">
+    UPDATE  fund_manager SET name = #{name} WHERE soeid = #{soeid}
+  </update>
+
+  <delete id="deleteFundManager" parameterType="com.team5.Pojo.FundManager">
+    DELETE FROM fund_manager WHERE soeid = #{soeid}
+  </delete>
+
+  <update id="copyPortfolio" parameterType="java.util.Map">
+    UPDATE portfolio SET fund_manager_id = #{fundManagerID}
+    WHERE id = #{portfolioID}
+  </update>
+
+
+</mapper>
+
